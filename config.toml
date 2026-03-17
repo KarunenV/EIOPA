@@ -1,0 +1,16 @@
+# config.toml
+
+# RSS feed URL
+rss_url = "https://www.eiopa.europa.eu/feed/53/rss_en"
+
+# Target Excel sheets
+target_sheets = ["RFR_spot_with_VA", "RFR_spot_no_VA"]
+
+# Column filters to extract
+finances = ["Euro", "United Kingdom", "United States"]
+
+# Number of data rows to skip
+skip_rows = 4
+
+# Optional: starting column to write Excel (0=A, 1=B, 2=C)
+start_col = 2
