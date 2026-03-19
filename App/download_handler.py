@@ -28,20 +28,8 @@ def process_zip(content: bytes, config: dict):
 
                 file = zf.open(fname)
                 xl = pd.ExcelFile(file, engine="openpyxl")
-                available_sheets = xl.sheet_names
 
-                # Match target sheets exactly or with optional _UP suffix
-                matched_sheets = []
-                for target in TARGET_SHEETS:
-                    for sheet in available_sheets:
-                        if sheet == target or sheet.startswith(f"{target}_"):
-                            matched_sheets.append(sheet)
-
-                if not matched_sheets:
-                    print(f"   ⚠️ No target sheets found in {fname}")
-                    continue
-
-                for sheet in matched_sheets:
+                for sheet in TARGET_SHEETS:
                     df = pd.read_excel(xl, sheet_name=sheet, header=1)
 
                     for finance in finances:
@@ -59,12 +47,12 @@ def process_zip(content: bytes, config: dict):
 
                         # Insert date row at the top
                         date_obj = dateparser.parse(published_date)
-                        date_str = date_obj.strftime("%m-%Y")
+                        date_str = date_obj.strftime("%d-%m-%Y")
 
                         # Create a one-row date DataFrame aligned to filtered columns
                         date_row = pd.DataFrame([pd.Series([date_str] * len(df_filtered.columns), index=df_filtered.columns)])
 
                         # Prepend the date row to the filtered data
-                        results[f"{finance}_{target}"] = pd.concat([date_row, df_filtered], ignore_index=True)
+                        results[f"{finance}_{sheet}"] = pd.concat([date_row, df_filtered], ignore_index=True)
 
     return results

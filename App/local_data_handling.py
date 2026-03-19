@@ -3,17 +3,18 @@ import pandas as pd
 from openpyxl import load_workbook, Workbook
 
 
-def edit_local_Excel(results: dict, config: dict):
+def edit_local_Excel(results: dict, config: dict, usingLocalFiles=False):
     TARGET_SHEETS = config.get("target_sheets", [])
     FINANCES = config.get("finances", [])
-    OUTPUT_DIR = config.get("output_dir", "output_data")
+    OUTPUT_DIR =  "output_data"
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for finance in FINANCES:
         for sheet in TARGET_SHEETS:
-
             out_name = os.path.join(OUTPUT_DIR, f"{finance}.xlsx")
+
+
             print(f"Saving {finance} data to {out_name} (sheet: {sheet})")
             results_key = f"{finance}_{sheet}"
             if results_key not in results:
@@ -21,6 +22,9 @@ def edit_local_Excel(results: dict, config: dict):
                 continue
 
             results_df = results[results_key]
+
+            if usingLocalFiles:
+                sheet = f"{sheet}_Manual"
 
             # date header to match is first column value of the first row in results_df
             date_to_match = str(results_df.iloc[0, 0]).strip() if not results_df.empty else None
