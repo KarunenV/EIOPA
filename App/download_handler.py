@@ -6,11 +6,11 @@ import pandas as pd
 from dateutil import parser as dateparser
 import re
 
-def download_file(url: str, config: dict) -> bytes:
+def download_file(url: str, config: dict, fallback_date=None) -> bytes:
     print(f"Downloading: {url}")
     res = requests.get(url)
     res.raise_for_status()
-    return process_zip(res.content, config)
+    return process_zip(res.content, config, fallback_date=fallback_date)
 
 def process_zip(content: bytes, config: dict, fallback_date=None) -> dict:
     """

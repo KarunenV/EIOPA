@@ -10,7 +10,7 @@ import calendar
 
 ## Local imports
 from download_handler import download_file, process_zip
-from local_data_handling import edit_local_Excel, reset_output_excels
+from local_data_handling import edit_local_Excel
 
 MONTHS = {
     "january": 1, "february": 2, "march": 3, "april": 4,
@@ -45,11 +45,6 @@ def main():
     # Load config
     config = toml.load("config.toml")
 
-    answer = input("Do you wish to reset all the data? (y/n): ").strip().lower()
-    if answer.lower() != "y":
-        reset_output_excels()
-
-
     # # Parse RSS
     feed = feedparser.parse(config["rss_url"])
 
@@ -64,7 +59,7 @@ def main():
                 
                 try:
                     zip_data = download_file(href, config, extract_date(title))
-                    # edit_local_Excel(zip_data, config)
+                    edit_local_Excel(zip_data, config)
                 except Exception as e:
                     print(f"Failed to process {href} → {str(e)}")
 
