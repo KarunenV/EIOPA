@@ -2,12 +2,12 @@ import os
 import pandas as pd
 from openpyxl import load_workbook, Workbook
 
+OUTPUT_DIR =  "output_data"
 
 def edit_local_Excel(results: dict, config: dict, usingLocalFiles=False):
     TARGET_SHEETS = config.get("target_sheets", [])
     FINANCES = config.get("finances", [])
-    OUTPUT_DIR =  "output_data"
-
+    
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for finance in FINANCES:
@@ -91,3 +91,25 @@ def edit_local_Excel(results: dict, config: dict, usingLocalFiles=False):
                 print("   → No data rows to write after date header")
 
 
+def reset_output_excels():
+    if not os.path.isdir(OUTPUT_DIR):
+        print(f"Output directory not found: {OUTPUT_DIR}")
+        return
+
+    for filename in os.listdir(OUTPUT_DIR):
+        if filename.lower().endswith(".xlsx"):
+            path = os.path.join(OUTPUT_DIR, filename)
+
+            try:
+                os.remove(path)
+                print(f"Deleted: {filename}")
+
+                # recreate empty Excel file
+                wb = Workbook()
+                wb.remove(wb.active)  # no default sheet
+                wb.save(path)
+
+                print(f"Recreated empty Excel: {filename}")
+
+            except Exception as e:
+                print(f"Failed to reset {filename} → {e}")
